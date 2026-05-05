@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أعمالي - معرض المشاريع</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .project-card:hover .delete-btn { opacity: 1; }
+        .gradient-text { background: linear-gradient(90deg, #2563eb, #4f46e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 w-full glass-effect border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
+                    <i data-lucide="layout-grid"></i>
+                </div>
+                <span class="text-2xl font-black tracking-tight text-slate-800">أعمالي</span>
+            </div>
+
+            <div id="admin-controls">
+                <button id="login-btn" onclick="openLoginModal()" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-800 hover:text-white px-5 py-2.5 rounded-full transition-all duration-300 font-bold text-sm">
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                    دخول الإدارة
+                </button>
+                <div id="logged-in-status" class="hidden flex items-center gap-3">
+                    <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full uppercase tracking-widest">المشرف</span>
+                    <button onclick="logoutAdmin()" class="bg-red-50 text-red-600 p-2.5 rounded-full hover:bg-red-600 hover:text-white transition-all">
+                        <i data-lucide="unlock" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        
+        <!-- Hero Section -->
+        <section class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-tight">
+                مرحباً بك في <span class="gradient-text">معرض مشاريعي</span>
+            </h1>
+            <p class="text-slate-500 text-lg max-w-2xl mx-auto">استكشف أحدث التطبيقات والمشاريع البرمجية التي قمت بتطويرها مؤخراً.</p>
+        </section>
+
+        <!-- Admin Add Project Panel (Hidden by default) -->
+        <section id="admin-panel" class="hidden mb-20 bg-white p-8 rounded-[2.5rem] shadow-2xl border border-slate-100 animate-in fade-in slide-in-from-top-4 duration-500">
+            <h2 class="text-xl font-bold mb-8 flex items-center gap-3">
+                <i data-lucide="plus" class="text-blue-600"></i> إضافة عمل إبداعي جديد
+            </h2>
+            <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-sm font-bold text-slate-700">اسم المشروع</label>
+                        <input id="proj-title" type="text" required placeholder="مثال: متجر إلكتروني" class="w-full bg-slate-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-bold text-slate-700">رابط المشروع (GitHub)</label>
+                        <input id="proj-link" type="url" required placeholder="https://github.com/..." class="w-full bg-slate-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-left" dir="ltr">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-sm font-bold text-slate-700">وصف المشروع</label>
+                        <textarea id="proj-desc" rows="3" placeholder="اشرح فكرة المشروع باختصار..." class="w-full bg-slate-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div id="image-dropzone" class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 hover:bg-slate-100 transition-colors relative overflow-hidden h-full min-h-[200px]">
+                        <div id="image-preview-container" class="hidden absolute inset-0">
+                            <img id="image-preview" src="" class="w-full h-full object-cover">
+                            <button type="button" onclick="clearImage()" class="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full shadow-xl">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <label id="upload-label" class="cursor-pointer flex flex-col items-center gap-3">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md text-blue-600">
+                                <i data-lucide="cloud-upload"></i>
+                            </div>
+                            <span class="text-sm font-bold text-slate-500">اضغط لرفع صورة المشروع</span>
+                            <input type="file" id="image-input" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                    <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 transition-all active:scale-[0.98]">
+                        نشر المشروع الآن
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Projects Grid -->
+        <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <!-- Projects will be injected here -->
+            <div class="col-span-full py-20 text-center text-slate-400">
+                <div class="animate-pulse flex flex-col items-center gap-4">
+                    <i data-lucide="loader" class="animate-spin w-10 h-10"></i>
+                    <p>جاري تحميل المعرض...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
+        <div class="relative bg-white w-full max-w-md p-10 rounded-[3rem] shadow-2xl animate-in zoom-in-95 duration-200 text-center">
+            <button onclick="closeLoginModal()" class="absolute top-6 left-6 text-slate-400 hover:text-slate-800">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="lock" class="w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800">منطقة الإدارة</h2>
+            <p class="text-slate-500 text-sm mt-2 font-medium mb-8">يرجى إدخال رمز الوصول للمتابعة</p>
+            <form id="login-form" class="space-y-6">
+                <input id="admin-pass" type="password" required placeholder="••••••••" class="w-full bg-slate-100 border-none px-6 py-5 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-center text-xl font-bold tracking-[0.5em]">
+                <button type="submit" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg hover:bg-blue-600 transition-all shadow-xl">
+                    دخول
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2LVcSHv4goDJWdSBe1yVahT4kLZrQLVU",
+            authDomain: "workme-34a5e.firebaseapp.com",
+            projectId: "workme-34a5e",
+            storageBucket: "workme-34a5e.firebasestorage.app",
+            messagingSenderId: "811013340384",
+            appId: "1:811013340384:web:cfe8d338776c7f2ef9a485",
+            measurementId: "G-VFDZY34P9T"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const ADMIN_PASSWORD = "2008hd";
+        let isAdmin = false;
+        let base64Image = "";
+
+        // UI References
+        const projectsContainer = document.getElementById('projects-container');
+        const loginModal = document.getElementById('login-modal');
+        const adminPanel = document.getElementById('admin-panel');
+        const loginBtn = document.getElementById('login-btn');
+        const loggedInStatus = document.getElementById('logged-in-status');
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const uploadLabel = document.getElementById('upload-label');
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // 1. Auth Flow
+        signInAnonymously(auth).catch(err => console.error(err));
+        
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loadProjects();
+            }
+        });
+
+        // 2. Fetch Projects
+        function loadProjects() {
+            const q = collection(db, 'artifacts', 'workme-app', 'public', 'data', 'projects');
+            onSnapshot(q, (snapshot) => {
+                projectsContainer.innerHTML = '';
+                const projects = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                
+                if (projects.length === 0) {
+                    projectsContainer.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400">لا توجد مشاريع مضافة حالياً.</div>`;
+                    return;
+                }
+
+                projects.forEach(p => {
+                    const card = document.createElement('div');
+                    card.className = "group bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full";
+                    
+                    const downloadLink = p.link.includes('github.com') ? `${p.link.replace(/\/$/, '')}/archive/refs/heads/main.zip` : p.link;
+
+                    card.innerHTML = `
+                        <div class="relative h-64 overflow-hidden bg-slate-100">
+                            ${p.imageData ? `<img src="${p.imageData}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">` : 
+                             `<div class="w-full h-full flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-12 h-12"></i></div>`}
+                            
+                            ${isAdmin ? `
+                                <button onclick="deleteProject('${p.id}')" class="absolute top-6 left-6 bg-white/90 text-red-600 p-3 rounded-2xl shadow-xl hover:bg-red-600 hover:text-white transition-all opacity-0 group-hover:opacity-100">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="p-8 flex flex-col flex-grow">
+                            <h3 class="text-2xl font-black text-slate-800 mb-3">${p.title}</h3>
+                            <p class="text-slate-500 text-sm leading-relaxed mb-8 line-clamp-3">${p.description || 'لا يوجد وصف متاح.'}</p>
+                            <div class="mt-auto flex gap-4">
+                                <a href="${p.link}" target="_blank" class="flex-1 bg-slate-900 text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm hover:bg-blue-600 transition-all">
+                                    <i data-lucide="external-link" class="w-4 h-4"></i> معاينة
+                                </a>
+                                <a href="${downloadLink}" class="w-14 h-14 bg-slate-100 text-slate-800 rounded-2xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all">
+                                    <i data-lucide="download" class="w-5 h-5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    projectsContainer.appendChild(card);
+                });
+                lucide.createIcons();
+            });
+        }
+
+        // 3. Admin Handlers
+        window.openLoginModal = () => loginModal.classList.remove('hidden');
+        window.closeLoginModal = () => loginModal.classList.add('hidden');
+
+        document.getElementById('login-form').onsubmit = (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === ADMIN_PASSWORD) {
+                isAdmin = true;
+                adminPanel.classList.remove('hidden');
+                loginBtn.classList.add('hidden');
+                loggedInStatus.classList.remove('hidden');
+                closeLoginModal();
+                loadProjects(); // Refresh to show delete buttons
+            } else {
+                alert('كلمة المرور خاطئة');
+            }
+        };
+
+        window.logoutAdmin = () => {
+            isAdmin = false;
+            adminPanel.classList.add('hidden');
+            loginBtn.classList.remove('hidden');
+            loggedInStatus.classList.add('hidden');
+            loadProjects();
+        };
+
+        // 4. Image Handling
+        imageInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    base64Image = ev.target.result;
+                    imagePreview.src = base64Image;
+                    imagePreviewContainer.classList.remove('hidden');
+                    uploadLabel.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        window.clearImage = () => {
+            base64Image = "";
+            imagePreviewContainer.classList.add('hidden');
+            uploadLabel.classList.remove('hidden');
+            imageInput.value = "";
+        };
+
+        // 5. Submit Project
+        document.getElementById('project-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "جاري النشر...";
+
+            try {
+                await addDoc(collection(db, 'artifacts', 'workme-app', 'public', 'data', 'projects'), {
+                    title: document.getElementById('proj-title').value,
+                    link: document.getElementById('proj-link').value,
+                    description: document.getElementById('proj-desc').value,
+                    imageData: base64Image,
+                    createdAt: Date.now()
+                });
+                
+                // Reset form
+                document.getElementById('project-form').reset();
+                clearImage();
+                alert('تم نشر المشروع بنجاح!');
+            } catch (err) {
+                console.error(err);
+                alert('خطأ أثناء الحفظ');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "نشر المشروع الآن";
+            }
+        };
+
+        // 6. Delete Project
+        window.deleteProject = async (id) => {
+            if (confirm('هل أنت متأكد من حذف هذا المشروع؟')) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', 'workme-app', 'public', 'data', 'projects', id));
+                } catch (err) {
+                    alert('خطأ في الحذف');
+                }
+            }
+        };
+
+    </script>
+</body>
+</html>
