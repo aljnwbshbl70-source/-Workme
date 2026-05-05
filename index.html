@@ -3,137 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أعمالي - معرض المشاريع</title>
-    <!-- Tailwind CSS -->
+    <title>أعمالي - Neon Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts (Cairo) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { font-family: 'Cairo', sans-serif; scroll-behavior: smooth; }
-        .glass-effect { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .gradient-text { background: linear-gradient(90deg, #2563eb, #4f46e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        input::placeholder, textarea::placeholder { text-align: right; }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body { font-family: 'Cairo', sans-serif; background-color: #050505; color: #ffffff; }
+        .neon-border { border: 1px solid #00f3ff; box-shadow: 0 0 10px #00f3ff, inset 0 0 5px #00f3ff; }
+        .neon-text { text-shadow: 0 0 10px #00f3ff; color: #00f3ff; }
+        .neon-btn { background: transparent; border: 1px solid #ff00ff; color: #ff00ff; box-shadow: 0 0 10px #ff00ff; transition: 0.3s; }
+        .neon-btn:hover { background: #ff00ff; color: #fff; box-shadow: 0 0 20px #ff00ff; }
+        .neon-card { background: #0f0f0f; border: 1px solid #333; transition: 0.4s; }
+        .neon-card:hover { border-color: #00f3ff; box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); transform: translateY(-5px); }
+        .glass { background: rgba(15, 15, 15, 0.8); backdrop-filter: blur(10px); }
+        .category-btn.active { background: #00f3ff; color: #000; box-shadow: 0 0 15px #00f3ff; border-color: #00f3ff; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen">
+<body class="min-h-screen">
 
-    <!-- Header -->
-    <header class="sticky top-0 z-40 w-full glass-effect border-b border-slate-200">
+    <header class="sticky top-0 z-50 glass border-b border-zinc-800">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg">
-                    <i data-lucide="layout-grid"></i>
+                <div class="w-10 h-10 bg-zinc-900 rounded-lg flex items-center justify-center text-[#00f3ff] neon-border">
+                    <i data-lucide="zap"></i>
                 </div>
-                <span class="text-2xl font-black tracking-tight text-slate-800">أعمالي</span>
+                <span class="text-2xl font-black tracking-widest neon-text">أعمالي</span>
             </div>
 
             <div id="admin-controls">
-                <button id="login-btn" onclick="openLoginModal()" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-800 hover:text-white px-5 py-2.5 rounded-full transition-all duration-300 font-bold text-sm">
-                    <i data-lucide="lock" class="w-4 h-4"></i>
-                    دخول الإدارة
+                <button id="login-btn" onclick="openLoginModal()" class="neon-btn px-6 py-2 rounded-full font-bold text-sm">
+                    <i data-lucide="lock" class="inline w-4 h-4 ml-1"></i> الإدارة
                 </button>
                 <div id="logged-in-status" class="hidden flex items-center gap-3">
-                    <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full uppercase tracking-widest">المشرف</span>
-                    <button onclick="logoutAdmin()" class="bg-red-50 text-red-600 p-2.5 rounded-full hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    <span class="text-xs font-bold bg-zinc-800 text-[#00f3ff] px-3 py-1 rounded-full border border-[#00f3ff]">ADMIN</span>
+                    <button onclick="logoutAdmin()" class="text-red-500 hover:text-red-400">
+                        <i data-lucide="log-out"></i>
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-6 py-12">
         
-        <!-- Hero Section -->
         <section class="text-center mb-16">
-            <h1 class="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-tight">
-                معرض <span class="gradient-text">المشاريع البرمجية</span>
+            <h1 class="text-5xl md:text-7xl font-black mb-8 leading-tight">
+                مختبر <span class="neon-text uppercase">الإبداع</span>
             </h1>
-            <p class="text-slate-500 text-lg max-w-2xl mx-auto">استكشف وحمّل أحدث أعمالي البرمجية مباشرة من GitHub.</p>
+            
+            <div id="category-filter" class="flex flex-wrap justify-center gap-4 mb-6">
+                <button onclick="filterProjects('all')" class="category-btn active px-6 py-2 rounded-xl border border-zinc-700 transition-all font-bold">الكل</button>
+                <button onclick="filterProjects('مواقع')" class="category-btn px-6 py-2 rounded-xl border border-zinc-700 transition-all font-bold">مواقع</button>
+                <button onclick="filterProjects('متاجر')" class="category-btn px-6 py-2 rounded-xl border border-zinc-700 transition-all font-bold">متاجر</button>
+                <button onclick="filterProjects('مشاريع')" class="category-btn px-6 py-2 rounded-xl border border-zinc-700 transition-all font-bold">مشاريع</button>
+                <button onclick="filterProjects('ادوات')" class="category-btn px-6 py-2 rounded-xl border border-zinc-700 transition-all font-bold">أدوات</button>
+            </div>
+            <p id="category-desc" class="text-zinc-500 text-sm italic">عرض كافة الأعمال والمشاريع البرمجية المطورة.</p>
         </section>
 
-        <!-- Admin Panel -->
-        <section id="admin-panel" class="hidden mb-20 bg-white p-8 rounded-[2.5rem] shadow-2xl border border-slate-100 fade-in">
-            <h2 class="text-xl font-bold mb-8 flex items-center gap-3 text-blue-700">
-                <i data-lucide="file-plus"></i> إضافة مشروع جديد
+        <section id="admin-panel" class="hidden mb-20 bg-zinc-900/50 p-8 rounded-3xl border border-[#ff00ff]/30 shadow-[0_0_20px_rgba(255,0,255,0.1)]">
+            <h2 class="text-xl font-bold mb-8 flex items-center gap-3 text-[#ff00ff]">
+                <i data-lucide="plus-circle"></i> إضافة إلى الأرشيف
             </h2>
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-6">
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-700 block pr-2">اسم المشروع</label>
-                        <input id="proj-title" type="text" required placeholder="اسم المشروع" class="w-full bg-slate-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-700 block pr-2">رابط GitHub</label>
-                        <input id="proj-link" type="url" required placeholder="https://github.com/..." class="w-full bg-slate-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-left" dir="ltr">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-sm font-bold text-slate-700 block pr-2">الوصف</label>
-                        <textarea id="proj-desc" rows="3" placeholder="وصف قصير للمشروع..." class="w-full bg-slate-50 border-none px-6 py-4 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
-                    </div>
+                    <input id="proj-title" type="text" required placeholder="اسم المشروع" class="w-full bg-zinc-950 border border-zinc-800 p-4 rounded-xl focus:border-[#00f3ff] outline-none">
+                    <input id="proj-link" type="url" required placeholder="رابط GitHub" class="w-full bg-zinc-950 border border-zinc-800 p-4 rounded-xl focus:border-[#00f3ff] outline-none text-left" dir="ltr">
+                    
+                    <select id="proj-category" class="w-full bg-zinc-950 border border-zinc-800 p-4 rounded-xl focus:border-[#00f3ff] outline-none appearance-none">
+                        <option value="مواقع">قسم: مواقع</option>
+                        <option value="متاجر">قسم: متاجر</option>
+                        <option value="مشاريع">قسم: مشاريع</option>
+                        <option value="ادوات">قسم: أدوات</option>
+                    </select>
+
+                    <textarea id="proj-desc" rows="3" placeholder="وصف مقتضب..." class="w-full bg-zinc-950 border border-zinc-800 p-4 rounded-xl focus:border-[#00f3ff] outline-none resize-none"></textarea>
                 </div>
 
                 <div class="flex flex-col gap-6">
-                    <div id="image-dropzone" class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-slate-200 rounded-[2rem] bg-slate-50 hover:bg-slate-100 relative min-h-[200px]">
+                    <div id="image-dropzone" class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-zinc-800 rounded-3xl bg-zinc-950 relative min-h-[200px]">
                         <div id="image-preview-container" class="hidden absolute inset-0">
-                            <img id="image-preview" src="" class="w-full h-full object-cover">
-                            <button type="button" onclick="clearImage()" class="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full shadow-xl">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                            <img id="image-preview" src="" class="w-full h-full object-cover rounded-3xl opacity-50">
+                            <button type="button" onclick="clearImage()" class="absolute top-4 right-4 bg-red-600 p-2 rounded-full"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                         <label id="upload-label" class="cursor-pointer flex flex-col items-center gap-3">
-                            <div class="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-md text-blue-600">
-                                <i data-lucide="image-plus"></i>
-                            </div>
-                            <span class="text-sm font-bold text-slate-500">ارفع صورة</span>
+                            <i data-lucide="upload-cloud" class="w-10 h-10 text-zinc-600"></i>
+                            <span class="text-zinc-500 font-bold">رفع صورة</span>
                             <input type="file" id="image-input" class="hidden" accept="image/*">
                         </label>
                     </div>
-                    <button type="submit" id="submit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-lg shadow-xl transition-all">
-                        نشر المشروع
+                    <button type="submit" id="submit-btn" class="w-full py-5 rounded-2xl font-black text-lg neon-btn uppercase tracking-widest">
+                        حفظ في السحابة
                     </button>
                 </div>
             </form>
         </section>
 
-        <!-- Projects Grid -->
-        <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            <!-- Loading State -->
-            <div id="loading-spinner" class="col-span-full py-20 text-center text-slate-400">
-                <div class="flex flex-col items-center gap-4">
-                    <i data-lucide="refresh-cw" class="animate-spin w-10 h-10"></i>
-                    <p>جاري تحميل المشاريع...</p>
-                </div>
+        <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div id="loading-spinner" class="col-span-full py-20 text-center text-[#00f3ff]">
+                <i data-lucide="refresh-cw" class="animate-spin mx-auto w-10 h-10 mb-4"></i>
+                <p class="font-bold tracking-widest">مزامنة البيانات...</p>
             </div>
         </div>
     </main>
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeLoginModal()"></div>
-        <div class="relative bg-white w-full max-w-md p-10 rounded-[3rem] shadow-2xl text-center">
-            <button onclick="closeLoginModal()" class="absolute top-6 left-6 text-slate-400 hover:text-slate-800">
-                <i data-lucide="circle-x"></i>
-            </button>
-            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4">
-                <i data-lucide="shield-check" class="w-8 h-8"></i>
-            </div>
-            <h2 class="text-2xl font-black text-slate-800">منطقة الإدارة</h2>
-            <form id="login-form" class="mt-8 space-y-6">
-                <input id="admin-pass" type="password" required placeholder="••••••••" class="w-full bg-slate-100 border-none px-6 py-5 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none text-center text-xl font-bold tracking-[0.5em]">
-                <button type="submit" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg hover:bg-blue-600 transition-all shadow-xl">
-                    دخول
-                </button>
+    <div id="login-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90">
+        <div class="bg-zinc-950 w-full max-w-md p-10 rounded-3xl border border-[#00f3ff] shadow-[0_0_30px_rgba(0,243,255,0.2)] text-center">
+            <h2 class="text-2xl font-black neon-text mb-8 tracking-widest uppercase">التحقق من الهوية</h2>
+            <form id="login-form" class="space-y-6">
+                <input id="admin-pass" type="password" required placeholder="رمز الدخول" class="w-full bg-zinc-900 border border-zinc-800 p-4 rounded-xl text-center text-xl font-bold tracking-[0.5em] focus:border-[#ff00ff] outline-none">
+                <button type="submit" class="w-full neon-btn py-4 rounded-xl font-black">دخول</button>
+                <button type="button" onclick="closeLoginModal()" class="text-zinc-600 text-sm">إلغاء</button>
             </form>
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -155,87 +139,71 @@
         const ADMIN_PASSWORD = "2008hd";
         let isAdmin = false;
         let base64Image = "";
-
-        const projectsContainer = document.getElementById('projects-container');
-        const adminPanel = document.getElementById('admin-panel');
-        const loginBtn = document.getElementById('login-btn');
-        const loggedInStatus = document.getElementById('logged-in-status');
-        const imageInput = document.getElementById('image-input');
-        const imagePreview = document.getElementById('image-preview');
-        const imagePreviewContainer = document.getElementById('image-preview-container');
-        const uploadLabel = document.getElementById('upload-label');
+        let allProjects = [];
 
         lucide.createIcons();
+        signInAnonymously(auth);
 
-        // Start fetching data immediately without waiting for Auth
-        function startSync() {
-            const q = collection(db, 'artifacts', 'workme-app', 'public', 'data', 'projects');
-            onSnapshot(q, (snapshot) => {
-                const loadingSpinner = document.getElementById('loading-spinner');
-                if (loadingSpinner) loadingSpinner.remove();
-                
-                projectsContainer.innerHTML = '';
-                const projects = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-                
-                if (projects.length === 0) {
-                    projectsContainer.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400">لا توجد مشاريع مضافة.</div>`;
-                    return;
-                }
+        const descriptions = {
+            all: "عرض كافة الأعمال والمشاريع البرمجية المطورة.",
+            "مواقع": "واجهات وتطبيقات ويب متكاملة مبنية بأحدث التقنيات.",
+            "متاجر": "حلول التجارة الإلكترونية وأنظمة البيع الرقمي.",
+            "مشاريع": "مشاريع برمجية خاصة وأنظمة ذكاء اصطناعي.",
+            "ادوات": "أدوات مساعدة، سكربتات، وبوتات لتسهيل العمل الرقمي."
+        };
 
-                projects.forEach(p => {
-                    const card = document.createElement('div');
-                    card.className = "group bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col h-full fade-in";
-                    
-                    let downloadUrl = p.link.trim().replace(/\/$/, '');
-                    if (downloadUrl.includes("github.com")) {
-                        downloadUrl = `${downloadUrl}/archive/refs/heads/main.zip`;
-                    }
+        window.filterProjects = (cat) => {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('category-desc').innerText = descriptions[cat];
+            renderProjects(cat === 'all' ? allProjects : allProjects.filter(p => p.category === cat));
+        };
 
-                    card.innerHTML = `
-                        <div class="relative h-64 overflow-hidden bg-slate-100">
-                            ${p.imageData ? `<img src="${p.imageData}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">` : 
-                             `<div class="w-full h-full flex items-center justify-center text-slate-300"><i data-lucide="image" class="w-12 h-12"></i></div>`}
-                            
-                            ${isAdmin ? `
-                                <button onclick="window.deleteProject('${p.id}')" class="absolute top-6 left-6 bg-white/90 text-red-600 p-3 rounded-2xl shadow-xl hover:bg-red-600 hover:text-white transition-all opacity-0 group-hover:opacity-100">
-                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
-                                </button>
-                            ` : ''}
+        function renderProjects(projects) {
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
+            if (projects.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-20 text-center text-zinc-600 uppercase tracking-widest">لا توجد بيانات</div>`;
+                return;
+            }
+
+            projects.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "neon-card rounded-3xl overflow-hidden flex flex-col h-full";
+                let dl = p.link.trim().replace(/\/$/, '');
+                if (dl.includes("github.com")) dl = `${dl}/archive/refs/heads/main.zip`;
+
+                card.innerHTML = `
+                    <div class="relative h-56 bg-zinc-900">
+                        ${p.imageData ? `<img src="${p.imageData}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-zinc-800"><i data-lucide="code" class="w-12 h-12"></i></div>`}
+                        <div class="absolute top-4 right-4 bg-black/60 px-3 py-1 rounded-full text-[10px] neon-text font-bold border border-[#00f3ff]">${p.category || 'عام'}</div>
+                        ${isAdmin ? `<button onclick="window.deleteProject('${p.id}')" class="absolute top-4 left-4 bg-red-600/80 p-2 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4 text-white"></i></button>` : ''}
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold mb-2">${p.title}</h3>
+                        <p class="text-zinc-500 text-xs leading-relaxed mb-6 line-clamp-3">${p.description}</p>
+                        <div class="mt-auto flex gap-3">
+                            <a href="${p.link}" target="_blank" class="flex-1 text-center py-3 bg-white text-black rounded-xl font-black text-xs hover:bg-[#00f3ff] transition-all">معاينة</a>
+                            <button onclick="window.downloadProject('${dl}', '${p.title}')" class="w-12 h-12 flex items-center justify-center border border-zinc-800 rounded-xl hover:border-[#ff00ff] text-zinc-400 hover:text-[#ff00ff]"><i data-lucide="download" class="w-5 h-5"></i></button>
                         </div>
-                        <div class="p-8 flex flex-col flex-grow">
-                            <h3 class="text-2xl font-black text-slate-800 mb-3">${p.title}</h3>
-                            <p class="text-slate-500 text-sm leading-relaxed mb-8 line-clamp-3">${p.description || 'وصف المشروع غير متوفر.'}</p>
-                            <div class="mt-auto flex gap-4">
-                                <a href="${p.link}" target="_blank" class="flex-1 bg-slate-900 text-white py-4 rounded-2xl flex items-center justify-center gap-2 font-bold text-sm hover:bg-blue-600 transition-all shadow-md">
-                                    <i data-lucide="external-link" class="w-4 h-4"></i> معاينة
-                                </a>
-                                <button onclick="window.downloadProject('${downloadUrl}', '${p.title}')" class="w-14 h-14 bg-slate-100 text-slate-800 rounded-2xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
-                                    <i data-lucide="download" class="w-5 h-5"></i>
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    projectsContainer.appendChild(card);
-                });
-                lucide.createIcons();
-            }, (error) => {
-                console.error("Snapshot error:", error);
-                // If it fails because of permissions, try to sign in first
-                signInAnonymously(auth);
+                    </div>
+                `;
+                container.appendChild(card);
             });
+            lucide.createIcons();
         }
 
-        // Initialize sync
-        startSync();
+        const q = collection(db, 'artifacts', 'workme-app', 'public', 'data', 'projects');
+        onSnapshot(q, (s) => {
+            const spinner = document.getElementById('loading-spinner');
+            if (spinner) spinner.remove();
+            allProjects = s.docs.map(d => ({id: d.id, ...d.data()}));
+            renderProjects(allProjects);
+        });
 
-        // Window exposed functions
-        window.downloadProject = (url, name) => {
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${name}.zip`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        window.downloadProject = (u, n) => {
+            const l = document.createElement('a'); l.href = u; l.setAttribute('download', `${n}.zip`);
+            document.body.appendChild(l); l.click(); document.body.removeChild(l);
         };
 
         window.openLoginModal = () => document.getElementById('login-modal').classList.remove('hidden');
@@ -245,81 +213,66 @@
             e.preventDefault();
             if (document.getElementById('admin-pass').value === ADMIN_PASSWORD) {
                 isAdmin = true;
-                adminPanel.classList.remove('hidden');
-                loginBtn.classList.add('hidden');
-                loggedInStatus.classList.remove('hidden');
+                document.getElementById('admin-panel').classList.remove('hidden');
+                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('logged-in-status').classList.remove('hidden');
                 window.closeLoginModal();
-                // Redraw projects to show delete buttons
-                startSync();
-            } else {
-                alert('كلمة المرور خاطئة');
-            }
+                renderProjects(allProjects);
+            } else { alert('خطأ'); }
         };
 
         window.logoutAdmin = () => {
             isAdmin = false;
-            adminPanel.classList.add('hidden');
-            loginBtn.classList.remove('hidden');
-            loggedInStatus.classList.add('hidden');
-            startSync();
+            document.getElementById('admin-panel').classList.add('hidden');
+            document.getElementById('login-btn').classList.remove('hidden');
+            document.getElementById('logged-in-status').classList.add('hidden');
+            renderProjects(allProjects);
         };
 
-        imageInput.onchange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
+        document.getElementById('image-input').onchange = (e) => {
+            const f = e.target.files[0];
+            if (f) {
+                const r = new FileReader();
+                r.onload = (ev) => {
                     base64Image = ev.target.result;
-                    imagePreview.src = base64Image;
-                    imagePreviewContainer.classList.remove('hidden');
-                    uploadLabel.classList.add('hidden');
+                    document.getElementById('image-preview').src = base64Image;
+                    document.getElementById('image-preview-container').classList.remove('hidden');
+                    document.getElementById('upload-label').classList.add('hidden');
                 };
-                reader.readAsDataURL(file);
+                r.readAsDataURL(f);
             }
         };
 
         window.clearImage = () => {
             base64Image = "";
-            imagePreviewContainer.classList.add('hidden');
-            uploadLabel.classList.remove('hidden');
-            imageInput.value = "";
+            document.getElementById('image-preview-container').classList.add('hidden');
+            document.getElementById('upload-label').classList.remove('hidden');
+            document.getElementById('image-input').value = "";
         };
 
         document.getElementById('project-form').onsubmit = async (e) => {
             e.preventDefault();
-            const submitBtn = document.getElementById('submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `جاري النشر...`;
-
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = true; btn.innerText = "جاري الرفع...";
             try {
-                // Ensure we are signed in before writing
-                if (!auth.currentUser) await signInAnonymously(auth);
-                
                 await addDoc(collection(db, 'artifacts', 'workme-app', 'public', 'data', 'projects'), {
                     title: document.getElementById('proj-title').value,
                     link: document.getElementById('proj-link').value,
+                    category: document.getElementById('proj-category').value,
                     description: document.getElementById('proj-desc').value,
                     imageData: base64Image,
                     createdAt: Date.now()
                 });
                 document.getElementById('project-form').reset();
                 window.clearImage();
-                alert('تمت الإضافة!');
-            } catch (err) {
-                alert('خطأ في الاتصال');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "نشر المشروع";
-            }
+                alert('تم الحفظ بنجاح');
+            } catch (err) { alert('خطأ في الاتصال'); }
+            finally { btn.disabled = false; btn.innerText = "حفظ في السحابة"; }
         };
 
         window.deleteProject = async (id) => {
-            if (confirm('هل تريد حذف المشروع؟')) {
-                await deleteDoc(doc(db, 'artifacts', 'workme-app', 'public', 'data', 'projects', id));
-            }
+            if (confirm('تأكيد الحذف؟')) await deleteDoc(doc(db, 'artifacts', 'workme-app', 'public', 'data', 'projects', id));
         };
     </script>
 </body>
 </html>
-
-```
